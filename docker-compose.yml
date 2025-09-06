@@ -1,0 +1,49 @@
+# version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: psql_server
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d 
+    networks:
+      - psqlnet
+    ports:
+      - "5634:5432"   # host:container
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # backup:
+  #   build: ./backup
+  #   container_name: psql_backup
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./backups:/backups
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_HOST: postgres
+  #     S3_ENDPOINT: ${S3_ENDPOINT}
+  #     S3_BUCKET: ${S3_BUCKET}
+  #     SFTP_HOST: ${SFTP_HOST}
+  #     SFTP_USER: ${SFTP_USER}
+  #     SFTP_KEY: ${SFTP_KEY}
+  #     TAILSCALE_HOST: ${TAILSCALE_HOST}
+  #   networks:
+  #     - psqlnet
+
+networks:
+  psqlnet:
