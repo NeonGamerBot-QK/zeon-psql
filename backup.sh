@@ -14,7 +14,7 @@ else
     echo ".env file not found!"
     exit 1
 fi
-
+START_TIME=$(date +%s)
 BACKUP_DIR="./backups"
 LATEST_BACKUP=$(ls -t "$BACKUP_DIR"/*.sql.gz.gpg 2>/dev/null | head -1)
 
@@ -56,3 +56,12 @@ else
 fi
 
 echo "All uploads finished. The latest backup is now stored as latest.sql.gz.gpg."
+# notify via slack
+END_TIME=$(date +%s)
+ELAPSED=$((END_TIME - START_TIME))
+BACKUP_SIZE=$(du -h "$LATEST_BACKUP" | cut -f1)
+
+ curl -s -X POST -H "Authorization: Bearer $SLACK_TOKEN" \
+       -H "Content-Type: application/json" \
+       -d "{\"channel\":\"$CHANNEL_ID\",\"text\":\"mrrp, backups complete! latest backup size is: $BACKUP_SIZE and it took $ELAPSED seconds to transfer to servers and run this script!\"}" \
+       https://slack.com/api/chat.postMessage > /dev/null
