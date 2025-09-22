@@ -1,5 +1,6 @@
 -- sql sql sql
 use zeon_discord;
+
 CREATE TABLE IF NOT EXISTS irl_updates (
   id SERIAL PRIMARY KEY,
   lat DOUBLE PRECISION NOT NULL,
