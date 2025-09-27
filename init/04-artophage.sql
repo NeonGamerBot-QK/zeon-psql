@@ -18,4 +18,5 @@ CREATE TABLE IF NOT EXISTS art (
 );
 
 ALTER TABLE users
-ALTER COLUMN id SET DEFAULT gen_random_uuid();
+ALTER COLUMN id
+SET DEFAULT gen_random_uuid ();
