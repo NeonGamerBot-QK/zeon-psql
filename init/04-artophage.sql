@@ -16,3 +16,6 @@ CREATE TABLE IF NOT EXISTS art (
   image_perm_link text NOT NULL,
   author bigint string_author text NOT NULL,
 );
+
+ALTER TABLE users
+ALTER COLUMN id SET DEFAULT gen_random_uuid();
