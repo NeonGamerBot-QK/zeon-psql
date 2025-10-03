@@ -37,3 +37,9 @@ $$ LANGUAGE plpgsql;
 
 -- there is also an autocreated table called 'sessions'
 -- there is also an autocreated table called 'ratelimits'
+
+
+
+-- migration 2025-10-02
+ALTER TABLE api_keys
+ADD COLUMN label TEXT;
