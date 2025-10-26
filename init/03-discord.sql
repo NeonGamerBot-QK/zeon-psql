@@ -30,3 +30,6 @@ CREATE TABLE transactions (
   ai_summary TEXT,                 -- AI-generated summary of transaction
   ai_analysis_out JSONB            -- AI output / analysis JSON
 );
+
+ALTER TABLE transactions
+ADD COLUMN ai_receipt_summary text;
