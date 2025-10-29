@@ -10,14 +10,14 @@ else
 fi
 
 # Generate random 4-character suffix
-RAND_SUFFIX=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c4)
+RAND_SUFFIX=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c4)
 
 # Default database and user names
 DB_NAME="${1:-zeon_$RAND_SUFFIX}"
 USER_NAME="${2:-zeon_$RAND_SUFFIX}"
 
 # Generate a random 16-character password
-PASSWORD=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c16)
+PASSWORD=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c16)
 
 echo "Creating database '$DB_NAME' and user '$USER_NAME'..."
 
