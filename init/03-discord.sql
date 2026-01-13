@@ -81,7 +81,7 @@ CREATE INDEX IF NOT EXISTS idx_system_stats_hostname ON system_stats (hostname);
 CREATE INDEX IF NOT EXISTS idx_system_stats_timestamp_hostname ON system_stats (timestamp DESC, hostname);
 
 --- uhh more stuff ^.^
-ALTER TABLE system_stats 
+ALTER TABLE system_stats
 ADD COLUMN IF NOT EXISTS node_env VARCHAR(50),
 ADD COLUMN IF NOT EXISTS server_ip VARCHAR(45),
 ADD COLUMN IF NOT EXISTS platform VARCHAR(50),
