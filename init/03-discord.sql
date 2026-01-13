@@ -35,55 +35,47 @@ CREATE TABLE transactions (
 ALTER TABLE transactions
 ADD COLUMN ai_receipt_summary text;
 
-
-
 CREATE TABLE IF NOT EXISTS system_stats (
-    id SERIAL PRIMARY KEY,
-    timestamp TIMESTAMPTZ DEFAULT NOW(),
-    hostname VARCHAR(255),
-
-    -- CPU metrics
-    cpu_usage_percent DECIMAL(5, 2),
-    cpu_count INTEGER,
-    load_avg_1m DECIMAL(6, 2),
-    load_avg_5m DECIMAL(6, 2),
-    load_avg_15m DECIMAL(6, 2),
-
-    -- Memory metrics (in bytes)
-    memory_total BIGINT,
-    memory_used BIGINT,
-    memory_free BIGINT,
-    memory_usage_percent DECIMAL(5, 2),
-
-    -- Swap metrics (in bytes)
-    swap_total BIGINT,
-    swap_used BIGINT,
-    swap_free BIGINT,
-    swap_usage_percent DECIMAL(5, 2),
-
-    -- Storage metrics (in bytes)
-    disk_total BIGINT,
-    disk_used BIGINT,
-    disk_free BIGINT,
-    disk_usage_percent DECIMAL(5, 2),
-
-    -- Process metrics
-    process_count INTEGER,
-    uptime_seconds BIGINT,
-
-    -- Node.js process metrics
-    node_heap_used BIGINT,
-    node_heap_total BIGINT,
-    node_external BIGINT,
-    node_rss BIGINT,
-
-    -- Network I/O (cumulative since boot)
-    network_rx_bytes BIGINT,
-    network_tx_bytes BIGINT
+  id SERIAL PRIMARY KEY,
+  timestamp TIMESTAMPTZ DEFAULT NOW (),
+  hostname VARCHAR(255),
+  -- CPU metrics
+  cpu_usage_percent DECIMAL(5, 2),
+  cpu_count INTEGER,
+  load_avg_1m DECIMAL(6, 2),
+  load_avg_5m DECIMAL(6, 2),
+  load_avg_15m DECIMAL(6, 2),
+  -- Memory metrics (in bytes)
+  memory_total BIGINT,
+  memory_used BIGINT,
+  memory_free BIGINT,
+  memory_usage_percent DECIMAL(5, 2),
+  -- Swap metrics (in bytes)
+  swap_total BIGINT,
+  swap_used BIGINT,
+  swap_free BIGINT,
+  swap_usage_percent DECIMAL(5, 2),
+  -- Storage metrics (in bytes)
+  disk_total BIGINT,
+  disk_used BIGINT,
+  disk_free BIGINT,
+  disk_usage_percent DECIMAL(5, 2),
+  -- Process metrics
+  process_count INTEGER,
+  uptime_seconds BIGINT,
+  -- Node.js process metrics
+  node_heap_used BIGINT,
+  node_heap_total BIGINT,
+  node_external BIGINT,
+  node_rss BIGINT,
+  -- Network I/O (cumulative since boot)
+  network_rx_bytes BIGINT,
+  network_tx_bytes BIGINT
 );
 
 -- Indexes for efficient Metabase queries
 CREATE INDEX IF NOT EXISTS idx_system_stats_timestamp ON system_stats (timestamp DESC);
-CREATE INDEX IF NOT EXISTS idx_system_stats_hostname ON system_stats (hostname);
-CREATE INDEX IF NOT EXISTS idx_system_stats_timestamp_hostname ON system_stats (timestamp DESC, hostname);
 
+CREATE INDEX IF NOT EXISTS idx_system_stats_hostname ON system_stats (hostname);
+
+CREATE INDEX IF NOT EXISTS idx_system_stats_timestamp_hostname ON system_stats (timestamp DESC, hostname);
