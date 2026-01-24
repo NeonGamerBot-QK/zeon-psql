@@ -90,18 +90,18 @@ ADD COLUMN IF NOT EXISTS p_server_uuid VARCHAR(100);
 
 -- 1. Processed SimpleFin transactions (rocket.json replacement)
 CREATE TABLE IF NOT EXISTS processed_simplefin_transactions (
-    transaction_id VARCHAR(255) PRIMARY KEY,
-    processed_at TIMESTAMPTZ DEFAULT NOW()
+  transaction_id VARCHAR(255) PRIMARY KEY,
+  processed_at TIMESTAMPTZ DEFAULT NOW ()
 );
 
 -- 2. Processed Google Calendar events (google-cache.json replacement)
 CREATE TABLE IF NOT EXISTS processed_calendar_events (
-    event_uid VARCHAR(512) PRIMARY KEY,
-    processed_at TIMESTAMPTZ DEFAULT NOW()
+  event_uid VARCHAR(512) PRIMARY KEY,
+  processed_at TIMESTAMPTZ DEFAULT NOW ()
 );
 
 -- 3. Notified manga chapters (manga-cache.json replacement)
 CREATE TABLE IF NOT EXISTS notified_manga_chapters (
-    chapter_id VARCHAR(255) PRIMARY KEY,
-    notified_at TIMESTAMPTZ DEFAULT NOW()
+  chapter_id VARCHAR(255) PRIMARY KEY,
+  notified_at TIMESTAMPTZ DEFAULT NOW ()
 );
