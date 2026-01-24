@@ -105,3 +105,45 @@ CREATE TABLE IF NOT EXISTS notified_manga_chapters (
   chapter_id VARCHAR(255) PRIMARY KEY,
   notified_at TIMESTAMPTZ DEFAULT NOW ()
 );
+
+
+
+CREATE TABLE IF NOT EXISTS groupme_thread_mapping (
+    discord_thread_id VARCHAR(64) PRIMARY KEY,
+    groupme_id VARCHAR(64) NOT NULL,
+    is_dm BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS groupme_last_message (
+    groupme_id VARCHAR(64) PRIMARY KEY,
+    last_message_id VARCHAR(64) NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS discord_datamining_commits (
+    id BIGINT PRIMARY KEY,                    -- comment id (also _id)
+    title TEXT NOT NULL,                      -- commit message
+    build_number VARCHAR(50),                 -- parsed build number
+    timestamp TIMESTAMPTZ NOT NULL,           -- created_at ISO string
+    url TEXT NOT NULL,                        -- html_url
+    description TEXT,                         -- comment body (can be long)
+    user_username VARCHAR(255),               -- user.username
+    user_id BIGINT,                           -- user.id
+    user_avatar_url TEXT,                     -- user.avatarURL
+    user_url TEXT,                            -- user.url
+    images TEXT[],                            -- array of image URLs (can be empty)
+    comments JSONB DEFAULT '[]'::jsonb,       -- sub-comments (same structure, stored as JSONB)
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+
+-- Index for querying by build number
+CREATE INDEX IF NOT EXISTS idx_datamining_build_number ON discord_datamining_commits(build_number);
+
+-- Track sent notifications (replaces db_cache_sent_* keys)
+CREATE TABLE IF NOT EXISTS discord_datamining_sent (
+    commit_id BIGINT PRIMARY KEY,
+    discord_message_id VARCHAR(64),           -- the message ID returned from Discord
+    sent_at TIMESTAMPTZ DEFAULT NOW()
+);
