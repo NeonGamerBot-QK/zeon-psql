@@ -17,38 +17,38 @@ PGHOST=localhost
 
 ### User Management
 
-| Script | Description |
-|--------|-------------|
-| `create-user.sh [username]` | Creates a new user with a random password |
-| `delete-user.sh <username>` | Deletes a user |
-| `list-users.sh` | Lists all users/roles |
-| `change-password.sh <username> [password]` | Changes a user's password |
+| Script                                     | Description                               |
+| ------------------------------------------ | ----------------------------------------- |
+| `create-user.sh [username]`                | Creates a new user with a random password |
+| `delete-user.sh <username>`                | Deletes a user                            |
+| `list-users.sh`                            | Lists all users/roles                     |
+| `change-password.sh <username> [password]` | Changes a user's password                 |
 
 ### Database Management
 
-| Script | Description |
-|--------|-------------|
+| Script                                 | Description            |
+| -------------------------------------- | ---------------------- |
 | `create-database.sh [db_name] [owner]` | Creates a new database |
-| `delete-database.sh <db_name>` | Deletes a database |
-| `list-databases.sh` | Lists all databases |
+| `delete-database.sh <db_name>`         | Deletes a database     |
+| `list-databases.sh`                    | Lists all databases    |
 
 ### Combined Operations
 
-| Script | Description |
-|--------|-------------|
+| Script                     | Description                                         |
+| -------------------------- | --------------------------------------------------- |
 | `create-db-user.sh [name]` | Creates both a database and user with the same name |
 | `delete-db-user.sh <name>` | Deletes both a database and user with the same name |
 
 ### Privileges
 
-| Script | Description |
-|--------|-------------|
+| Script                                   | Description                                        |
+| ---------------------------------------- | -------------------------------------------------- |
 | `grant-privileges.sh <db> <user> [type]` | Grants privileges (`all`, `readonly`, `readwrite`) |
 
 ### Utilities
 
-| Script | Description |
-|--------|-------------|
+| Script                      | Description                       |
+| --------------------------- | --------------------------------- |
 | `psql-connect.sh [db_name]` | Opens an interactive psql session |
 
 ## Examples
