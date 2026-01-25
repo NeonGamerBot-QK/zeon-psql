@@ -1,3 +1,5 @@
 .env
-backups
-pgdata
+backups/
+pgdata/
+*.sql.gz
+*.dump
