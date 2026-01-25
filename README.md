@@ -20,12 +20,12 @@ docker-compose ps
 
 Create a `.env` file based on `.env.example`:
 
-| Variable | Description |
-|----------|-------------|
-| `POSTGRES_USER` | Admin username |
-| `POSTGRES_PASSWORD` | Admin password |
-| `POSTGRES_DB` | Default database name |
-| `PGHOST` | Host address (usually `localhost`) |
+| Variable            | Description                        |
+| ------------------- | ---------------------------------- |
+| `POSTGRES_USER`     | Admin username                     |
+| `POSTGRES_PASSWORD` | Admin password                     |
+| `POSTGRES_DB`       | Default database name              |
+| `PGHOST`            | Host address (usually `localhost`) |
 
 ## Management Scripts
 
