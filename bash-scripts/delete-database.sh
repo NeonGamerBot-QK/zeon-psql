@@ -19,7 +19,7 @@ DB_NAME="$1"
 print_warning "Deleting database '$DB_NAME'..."
 
 # Terminate all connections to the database first
-psql_exec "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$DB_NAME' AND pid <> pg_backend_pid();" 2>/dev/null || true
+psql_exec "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$DB_NAME' AND pid <> pg_backend_pid();" 2> /dev/null || true
 
 psql_exec "DROP DATABASE IF EXISTS \"$DB_NAME\";"
 
