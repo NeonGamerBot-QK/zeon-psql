@@ -208,3 +208,40 @@ CREATE TABLE IF NOT EXISTS relationship_contacts (
 CREATE INDEX IF NOT EXISTS idx_relationships_name ON relationships(name);
 CREATE INDEX IF NOT EXISTS idx_contacts_relationship ON relationship_contacts(relationship_id);
 CREATE INDEX IF NOT EXISTS idx_contacts_date ON relationship_contacts(contacted_at DESC);
+
+
+
+-- errors table (error_formatter.js)
+CREATE TABLE IF NOT EXISTS errors (
+    id SERIAL PRIMARY KEY,
+    error_name VARCHAR(255) NOT NULL,
+    error_message TEXT NOT NULL,
+    stack_trace TEXT,
+    location VARCHAR(500),
+    file_path VARCHAR(500),
+    line_number INTEGER,
+    column_number INTEGER,
+    context JSONB,
+    module VARCHAR(255),
+    function_name VARCHAR(255),
+    user_id VARCHAR(100),
+    guild_id VARCHAR(100),
+    channel_id VARCHAR(100),
+    command VARCHAR(255),
+    severity VARCHAR(20) DEFAULT 'error',
+    environment VARCHAR(50),
+    node_version VARCHAR(20),
+    hostname VARCHAR(255),
+    resolved BOOLEAN DEFAULT false,
+    resolved_at TIMESTAMP,
+    resolved_by VARCHAR(255),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_errors_created ON errors(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_errors_name ON errors(error_name);
+CREATE INDEX IF NOT EXISTS idx_errors_module ON errors(module);
+CREATE INDEX IF NOT EXISTS idx_errors_resolved ON errors(resolved);
+CREATE INDEX IF NOT EXISTS idx_errors_severity ON errors(severity);
+
