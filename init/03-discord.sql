@@ -147,3 +147,64 @@ CREATE TABLE IF NOT EXISTS discord_datamining_sent (
     discord_message_id VARCHAR(64),           -- the message ID returned from Discord
     sent_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+
+-- random stuff amp did
+-- geo_checklists module
+CREATE TABLE IF NOT EXISTS geo_checklists (
+    id SERIAL PRIMARY KEY,
+    geofence_id VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    lat DECIMAL(10, 8),
+    long DECIMAL(11, 8),
+    radius INTEGER DEFAULT 100,
+    keywords TEXT[],
+    triggers TEXT[] DEFAULT ARRAY['arrive'],
+    checklist JSONB NOT NULL DEFAULT '[]',
+    depart_checklist JSONB DEFAULT '[]',
+    enabled BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS geo_checklist_completions (
+    id SERIAL PRIMARY KEY,
+    geofence_id VARCHAR(100) NOT NULL,
+    item_id VARCHAR(100) NOT NULL,
+    completed_at TIMESTAMP DEFAULT NOW(),
+    location_update_id INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_geo_checklists_geofence ON geo_checklists(geofence_id);
+CREATE INDEX IF NOT EXISTS idx_geo_completions_date ON geo_checklist_completions(completed_at);
+
+-- relationship_crm module
+CREATE TABLE IF NOT EXISTS relationships (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    discord_id VARCHAR(100),
+    telegram_id VARCHAR(100),
+    phone VARCHAR(50),
+    email VARCHAR(255),
+    slack_id VARCHAR(100),
+    groupme_id VARCHAR(100),
+    notes TEXT,
+    reminder_days INTEGER DEFAULT 30,
+    priority VARCHAR(20) DEFAULT 'normal',
+    tags TEXT[],
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS relationship_contacts (
+    id SERIAL PRIMARY KEY,
+    relationship_id INTEGER REFERENCES relationships(id) ON DELETE CASCADE,
+    platform VARCHAR(50) NOT NULL,
+    direction VARCHAR(10) NOT NULL,
+    message_preview TEXT,
+    contacted_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_relationships_name ON relationships(name);
+CREATE INDEX IF NOT EXISTS idx_contacts_relationship ON relationship_contacts(relationship_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_date ON relationship_contacts(contacted_at DESC);
