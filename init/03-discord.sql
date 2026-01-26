@@ -295,3 +295,174 @@ CREATE INDEX IF NOT EXISTS idx_emails_category ON processed_emails(category);
 CREATE INDEX IF NOT EXISTS idx_emails_priority ON processed_emails(priority DESC);
 CREATE INDEX IF NOT EXISTS idx_emails_received ON processed_emails(received_at DESC);
 CREATE INDEX IF NOT EXISTS idx_emails_is_2fa ON processed_emails(is_2fa);
+
+-- 
+-- 
+--- BIG SQL CHANGE BELOW
+-- 
+-- 
+
+
+-- Basic transaction fields
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS external_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS memo TEXT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS payee VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS posted BIGINT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS balance VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS currency VARCHAR(10);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS account_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS account_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS balance_date BIGINT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS transacted_at BIGINT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS available_balance VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS date VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS notes TEXT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS pending BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS plaid_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS typename VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS is_recurring BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS needs_review BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS review_status VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS hide_from_reports BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS is_split_transaction BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS data_provider_description TEXT;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS long_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS short_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS ignored_from VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS tax_deductible BOOLEAN;
+
+-- Array/JSONB fields (stored as JSONB since they're complex)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS tags JSONB;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS attachments JSONB;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS rewards JSONB;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS transaction_rule_node_ids JSONB;
+
+-- ============================================================================
+-- ORG (nested object)
+-- ============================================================================
+
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS org_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS org_url VARCHAR(500);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS org_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS org_domain VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS org_sfin_url VARCHAR(500);
+
+-- ============================================================================
+-- ACCOUNT (nested object)
+-- ============================================================================
+
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS account_icon VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS account_logo_url VARCHAR(500);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS account_typename VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS account_display_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS account_source VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS account_is_issued_card BOOLEAN;
+
+-- ============================================================================
+-- CATEGORY (nested object)
+-- ============================================================================
+
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_icon VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_typename VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_type VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_label VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_icon_key VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_category_type VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_tax_deductible BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_include_in_earnings BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_include_in_spending BOOLEAN;
+
+-- Category colors (nested)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_color_base VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_color_faded VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_color_light VARCHAR(50);
+
+-- Category group (nested)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_group_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_group_type VARCHAR(100);
+
+-- ============================================================================
+-- MERCHANT (nested object)
+-- ============================================================================
+
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS merchant_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS merchant_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS merchant_logo_url VARCHAR(500);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS merchant_typename VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS merchant_transactions_count INTEGER;
+
+-- Merchant recurring stream (nested)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS merchant_recurring_is_active BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS merchant_recurring_frequency VARCHAR(50);
+
+-- ============================================================================
+-- SERVICE (nested object)
+-- ============================================================================
+
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS service_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS service_internal_id INTEGER;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS service_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS service_slug VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS service_typename VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS service_square_logo VARCHAR(500);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS service_color_base VARCHAR(50);
+
+-- ============================================================================
+-- SUBSCRIPTION (nested object)
+-- ============================================================================
+
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_internal_id INTEGER;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_active BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_amount VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_manual BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_end_date VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_group_key VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_is_income BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_frequency INTEGER;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_typename VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_custom_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_service_type VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_is_cancellable BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_expected_next_bill_date VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_should_offer_bill_negotiation BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_is_eligible_for_bill_negotiation BOOLEAN;
+
+-- Subscription service (nested)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_service_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_service_internal_id INTEGER;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_service_name VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_service_slug VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_service_typename VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_service_square_logo VARCHAR(500);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_service_color_base VARCHAR(50);
+
+-- Subscription next charge (nested)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_next_charge_max_amount DECIMAL(12, 2);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_next_charge_min_amount DECIMAL(12, 2);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_next_charge_date VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_next_charge_amount DECIMAL(12, 2);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_next_charge_fluctuates BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_next_charge_is_estimate BOOLEAN;
+
+-- Subscription transaction category (nested)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_id VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_type VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_label VARCHAR(255);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_icon_key VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_typename VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_category_type VARCHAR(100);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_tax_deductible BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_include_in_earnings BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_include_in_spending BOOLEAN;
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_color_base VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_color_faded VARCHAR(50);
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_color_light VARCHAR(50);
+-- 
+--
+-- end big sql change
+-- 
+-- 
