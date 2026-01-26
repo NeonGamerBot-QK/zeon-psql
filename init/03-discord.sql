@@ -245,3 +245,53 @@ CREATE INDEX IF NOT EXISTS idx_errors_module ON errors(module);
 CREATE INDEX IF NOT EXISTS idx_errors_resolved ON errors(resolved);
 CREATE INDEX IF NOT EXISTS idx_errors_severity ON errors(severity);
 
+-- neons_mail module (processed_emails)
+CREATE TABLE IF NOT EXISTS processed_emails (
+    id SERIAL PRIMARY KEY,
+    message_id VARCHAR(500) UNIQUE,
+    from_address VARCHAR(255),
+    from_name VARCHAR(255),
+    to_address VARCHAR(255),
+    subject TEXT,
+    body_text TEXT,
+    body_html TEXT,
+    received_at TIMESTAMP,
+    processed_at TIMESTAMP DEFAULT NOW(),
+    
+    -- AI Analysis
+    summary TEXT,
+    category VARCHAR(50),
+    priority INTEGER DEFAULT 3,
+    sentiment VARCHAR(50),
+    
+    -- Extracted Data
+    is_2fa BOOLEAN DEFAULT false,
+    two_fa_code VARCHAR(50),
+    action_items JSONB DEFAULT '[]',
+    calendar_event JSONB,
+    receipt JSONB,
+    tracking_numbers TEXT[],
+    extracted_contacts JSONB DEFAULT '[]',
+    suggested_reply TEXT,
+    
+    -- Linking
+    transaction_id INTEGER,
+    relationship_id INTEGER,
+    
+    -- Status
+    read BOOLEAN DEFAULT false,
+    archived BOOLEAN DEFAULT false,
+    starred BOOLEAN DEFAULT false,
+    labels TEXT[],
+    
+    -- Raw data
+    raw_email JSONB,
+    attachments JSONB DEFAULT '[]'
+);
+
+CREATE INDEX IF NOT EXISTS idx_emails_message_id ON processed_emails(message_id);
+CREATE INDEX IF NOT EXISTS idx_emails_from ON processed_emails(from_address);
+CREATE INDEX IF NOT EXISTS idx_emails_category ON processed_emails(category);
+CREATE INDEX IF NOT EXISTS idx_emails_priority ON processed_emails(priority DESC);
+CREATE INDEX IF NOT EXISTS idx_emails_received ON processed_emails(received_at DESC);
+CREATE INDEX IF NOT EXISTS idx_emails_is_2fa ON processed_emails(is_2fa);
