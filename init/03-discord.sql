@@ -466,3 +466,6 @@ ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_color_li
 -- end big sql change
 -- 
 -- 
+
+ALTER TABLE transactions ALTER COLUMN balance TYPE DECIMAL(14, 2) USING balance::DECIMAL(14, 2);
+ALTER TABLE transactions ALTER COLUMN available_balance TYPE DECIMAL(14, 2) USING available_balance::DECIMAL(14, 2);
