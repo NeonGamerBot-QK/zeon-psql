@@ -469,3 +469,83 @@ ALTER TABLE transactions ADD COLUMN IF NOT EXISTS subscription_category_color_li
 
 ALTER TABLE transactions ALTER COLUMN balance TYPE DECIMAL(14, 2) USING balance::DECIMAL(14, 2);
 ALTER TABLE transactions ALTER COLUMN available_balance TYPE DECIMAL(14, 2) USING available_balance::DECIMAL(14, 2);
+
+
+
+-- simplefin req logger
+-- someone complains if i fetch sm
+-- ============================================================================
+-- SIMPLEFIN FETCH LOG TABLE
+-- Captures full API response data from SimpleFIN fetches
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS simplefin_fetch_log (
+    id SERIAL PRIMARY KEY,
+    fetch_id UUID DEFAULT gen_random_uuid(),
+    fetched_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    -- Request details
+    start_date BIGINT,
+    end_date BIGINT,
+    
+    -- Response metadata
+    success BOOLEAN NOT NULL,
+    error_message TEXT,
+    http_status INTEGER,
+    response_time_ms INTEGER,
+    
+    -- API errors array from response
+    api_errors JSONB,
+    
+    -- Stats
+    accounts_returned INTEGER,
+    transactions_returned INTEGER,
+    new_transactions_inserted INTEGER,
+    transactions_updated INTEGER,
+    
+    -- Full raw response (includes all account/transaction data)
+    raw_response JSONB,
+    
+    -- Trigger source
+    triggered_by VARCHAR(100),
+    notes TEXT
+);
+
+-- ============================================================================
+-- SIMPLEFIN ACCOUNT SNAPSHOTS
+-- Captures account state at each fetch (balance, available-balance, etc.)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS simplefin_account_snapshots (
+    id SERIAL PRIMARY KEY,
+    fetch_log_id INTEGER REFERENCES simplefin_fetch_log(id) ON DELETE CASCADE,
+    captured_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    -- Account identifiers
+    account_id VARCHAR(255) NOT NULL,
+    account_name VARCHAR(255),
+    
+    -- Org info
+    org_domain VARCHAR(255),
+    org_sfin_url VARCHAR(500),
+    
+    -- Account data
+    currency VARCHAR(10),
+    balance DECIMAL(14, 2),
+    available_balance DECIMAL(14, 2),
+    balance_date BIGINT,
+    
+    -- Extra fields
+    account_open_date BIGINT,
+    extra JSONB,
+    
+    -- Transaction count for this account in this fetch
+    transaction_count INTEGER
+);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_simplefin_fetch_log_fetched_at ON simplefin_fetch_log(fetched_at DESC);
+CREATE INDEX IF NOT EXISTS idx_simplefin_fetch_log_success ON simplefin_fetch_log(success);
+CREATE INDEX IF NOT EXISTS idx_simplefin_account_snapshots_fetch_log_id ON simplefin_account_snapshots(fetch_log_id);
+CREATE INDEX IF NOT EXISTS idx_simplefin_account_snapshots_account_id ON simplefin_account_snapshots(account_id);
+CREATE INDEX IF NOT EXISTS idx_simplefin_account_snapshots_captured_at ON simplefin_account_snapshots(captured_at DESC);
