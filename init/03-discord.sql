@@ -549,3 +549,17 @@ CREATE INDEX IF NOT EXISTS idx_simplefin_fetch_log_success ON simplefin_fetch_lo
 CREATE INDEX IF NOT EXISTS idx_simplefin_account_snapshots_fetch_log_id ON simplefin_account_snapshots(fetch_log_id);
 CREATE INDEX IF NOT EXISTS idx_simplefin_account_snapshots_account_id ON simplefin_account_snapshots(account_id);
 CREATE INDEX IF NOT EXISTS idx_simplefin_account_snapshots_captured_at ON simplefin_account_snapshots(captured_at DESC);
+
+
+
+CREATE TABLE IF NOT EXISTS imessage (
+    id BIGSERIAL PRIMARY KEY,
+    sender TEXT,
+    recipients JSONB,
+    content TEXT,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    raw JSONB NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS imessage_timestamp ON imessage (timestamp DESC);
+CREATE INDEX IF NOT EXISTS imessage_sender ON imessage (sender);
