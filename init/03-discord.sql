@@ -561,5 +561,84 @@ CREATE TABLE IF NOT EXISTS imessage (
     raw JSONB NOT NULL
 );
 
+
+
+-- ============================================================================
+-- RECEIPTS TABLE
+-- Auto-detected receipts from iMessages and emails, with PDF conversion,
+-- R2/Paperless uploads, and transaction matching with retry queue.
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS receipts (
+    id BIGSERIAL PRIMARY KEY,
+    processed_text_id INTEGER REFERENCES processed_texts(id) ON DELETE CASCADE,
+    processed_email_id INTEGER REFERENCES processed_emails(id) ON DELETE CASCADE,
+    source VARCHAR(10) NOT NULL CHECK (source IN ('text', 'email')),
+    detected_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    -- Extracted receipt data
+    merchant TEXT,
+    amount_cents INTEGER,
+    currency TEXT DEFAULT 'USD',
+    purchase_at TIMESTAMPTZ,
+    order_number TEXT,
+    receipt_url TEXT,
+    extracted JSONB NOT NULL DEFAULT '{}'::jsonb,
+
+    -- Transaction matching
+    transaction_id INTEGER REFERENCES transactions(id) ON DELETE SET NULL,
+    match_status VARCHAR(20) NOT NULL DEFAULT 'unmatched',
+    matched_at TIMESTAMPTZ,
+
+    -- Retry queue for unmatched receipts
+    next_match_attempt_at TIMESTAMPTZ,
+    match_attempts INTEGER NOT NULL DEFAULT 0,
+    last_match_error TEXT,
+
+    -- PDF conversion (Gotenberg)
+    pdf_status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    pdf_error TEXT,
+    pdf_generated_at TIMESTAMPTZ,
+
+    -- Cloudflare R2 upload
+    r2_status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    r2_error TEXT,
+    r2_bucket TEXT,
+    r2_object_key TEXT,
+    pdf_size_bytes BIGINT,
+
+    -- Paperless-ngx upload
+    paperless_status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    paperless_error TEXT,
+    paperless_document_id TEXT,
+    paperless_uploaded_at TIMESTAMPTZ,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    -- Ensure exactly one source FK is set
+    CONSTRAINT receipts_one_source CHECK (
+        (processed_text_id IS NOT NULL AND processed_email_id IS NULL AND source = 'text')
+        OR (processed_text_id IS NULL AND processed_email_id IS NOT NULL AND source = 'email')
+    )
+);
+
+-- Deduplication: one receipt per source message
+CREATE UNIQUE INDEX IF NOT EXISTS receipts_unique_text ON receipts(processed_text_id) WHERE processed_text_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS receipts_unique_email ON receipts(processed_email_id) WHERE processed_email_id IS NOT NULL;
+
+-- Retry queue for the daily cron job
+CREATE INDEX IF NOT EXISTS receipts_retry_queue ON receipts(next_match_attempt_at) WHERE match_status = 'unmatched';
+
+-- Transaction linking and matching support
+CREATE INDEX IF NOT EXISTS receipts_transaction ON receipts(transaction_id);
+CREATE INDEX IF NOT EXISTS receipts_amount_date ON receipts(amount_cents, purchase_at);
+
+-- Pipeline processing
+CREATE INDEX IF NOT EXISTS receipts_needs_pdf ON receipts(detected_at) WHERE pdf_status IN ('pending', 'failed') AND receipt_url IS NOT NULL;
+
+-- Helpful index on transactions table for receipt matching
+CREATE INDEX IF NOT EXISTS transactions_amount_created ON transactions(amount, created_at);
+
 CREATE INDEX IF NOT EXISTS imessage_timestamp ON imessage (timestamp DESC);
 CREATE INDEX IF NOT EXISTS imessage_sender ON imessage (sender);
