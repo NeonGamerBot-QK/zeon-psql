@@ -642,3 +642,21 @@ CREATE INDEX IF NOT EXISTS transactions_amount_created ON transactions(amount, c
 
 CREATE INDEX IF NOT EXISTS imessage_timestamp ON imessage (timestamp DESC);
 CREATE INDEX IF NOT EXISTS imessage_sender ON imessage (sender);
+
+
+
+-- Add Superhuman triage columns
+ALTER TABLE processed_emails ADD COLUMN IF NOT EXISTS split VARCHAR(50) DEFAULT 'other';
+ALTER TABLE processed_emails ADD COLUMN IF NOT EXISTS one_liner TEXT;
+ALTER TABLE processed_emails ADD COLUMN IF NOT EXISTS sender_type VARCHAR(50) DEFAULT 'unknown';
+ALTER TABLE processed_emails ADD COLUMN IF NOT EXISTS auto_archived BOOLEAN DEFAULT false;
+ALTER TABLE processed_emails ADD COLUMN IF NOT EXISTS auto_archive_reason TEXT;
+ALTER TABLE processed_emails ADD COLUMN IF NOT EXISTS thread_key VARCHAR(255);
+ALTER TABLE processed_emails ADD COLUMN IF NOT EXISTS follow_up_at TIMESTAMP;
+ALTER TABLE processed_emails ADD COLUMN IF NOT EXISTS importance_signal TEXT;
+
+-- Indexes for new columns
+CREATE INDEX IF NOT EXISTS idx_emails_split ON processed_emails(split);
+CREATE INDEX IF NOT EXISTS idx_emails_thread_key ON processed_emails(thread_key);
+CREATE INDEX IF NOT EXISTS idx_emails_follow_up ON processed_emails(follow_up_at) WHERE follow_up_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_emails_auto_archived ON processed_emails(auto_archived);
