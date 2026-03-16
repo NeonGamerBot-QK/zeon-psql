@@ -660,3 +660,8 @@ CREATE INDEX IF NOT EXISTS idx_emails_split ON processed_emails(split);
 CREATE INDEX IF NOT EXISTS idx_emails_thread_key ON processed_emails(thread_key);
 CREATE INDEX IF NOT EXISTS idx_emails_follow_up ON processed_emails(follow_up_at) WHERE follow_up_at IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_emails_auto_archived ON processed_emails(auto_archived);
+
+-- [Automated] Add pending transaction tracking to SimpleFin processed transactions
+-- Supports pending=1 param on SimpleFin API to detect pending→confirmed transitions
+ALTER TABLE processed_simplefin_transactions ADD COLUMN IF NOT EXISTS is_pending BOOLEAN DEFAULT false;
+ALTER TABLE processed_simplefin_transactions ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMPTZ;
