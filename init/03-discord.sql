@@ -665,3 +665,20 @@ CREATE INDEX IF NOT EXISTS idx_emails_auto_archived ON processed_emails(auto_arc
 -- Supports pending=1 param on SimpleFin API to detect pending→confirmed transitions
 ALTER TABLE processed_simplefin_transactions ADD COLUMN IF NOT EXISTS is_pending BOOLEAN DEFAULT false;
 ALTER TABLE processed_simplefin_transactions ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMPTZ;
+
+-- [Automated] Migrate id-tracker.json to PostgreSQL — Discord presence and Steam status tracking
+CREATE TABLE IF NOT EXISTS id_tracker_presence (
+    user_id TEXT PRIMARY KEY,
+    status TEXT NOT NULL DEFAULT 'offline',
+    offline_at BIGINT,
+    online_at BIGINT,
+    last_prez_data JSONB,
+    chart_data JSONB,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS id_tracker_steam (
+    steam_id TEXT PRIMARY KEY,
+    status INTEGER,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
