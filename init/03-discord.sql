@@ -682,3 +682,14 @@ CREATE TABLE IF NOT EXISTS id_tracker_steam (
     status INTEGER,
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- [Automated] Migrate emails.json to PostgreSQL — email forwarding approval queue and reply tracking
+CREATE TABLE IF NOT EXISTS forwarded_emails (
+    id TEXT PRIMARY KEY,
+    key_type TEXT NOT NULL DEFAULT 'pending',
+    from_text TEXT,
+    subject TEXT,
+    forward_to_emails TEXT[],
+    email_data JSONB NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
