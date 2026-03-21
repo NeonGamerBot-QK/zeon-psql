@@ -711,3 +711,6 @@ CREATE TABLE IF NOT EXISTS spotify_song_cache (
 
 CREATE INDEX IF NOT EXISTS idx_spotify_song_cache_play_date
     ON spotify_song_cache (play_date);
+
+-- [Automated] Test migration script
+select 1
