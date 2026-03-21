@@ -693,3 +693,21 @@ CREATE TABLE IF NOT EXISTS forwarded_emails (
     email_data JSONB NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- [Automated] Migrate spotify-db.json to PostgreSQL — Spotify recently-played song cache for dedup and weekly summaries
+CREATE TABLE IF NOT EXISTS spotify_song_cache (
+    played_at TEXT PRIMARY KEY,
+    track_name TEXT,
+    artist TEXT,
+    album TEXT,
+    album_cover TEXT,
+    duration_in_ms INTEGER,
+    duration_stamp TEXT,
+    release_date TEXT,
+    play_date TEXT,
+    all_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_spotify_song_cache_play_date
+    ON spotify_song_cache (play_date);
