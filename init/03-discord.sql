@@ -711,3 +711,73 @@ CREATE TABLE IF NOT EXISTS spotify_song_cache (
 
 CREATE INDEX IF NOT EXISTS idx_spotify_song_cache_play_date
     ON spotify_song_cache (play_date);
+
+-- [Automated] Add Waze data export tables (profile, drives, routes, reports, feedback, searches, favorites)
+
+CREATE TABLE IF NOT EXISTS waze_profile (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255),
+    username VARCHAR(255),
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    birth_date TIMESTAMPTZ,
+    entry_date TIMESTAMPTZ,
+    last_login TIMESTAMPTZ,
+    imported_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS waze_drives (
+    id SERIAL PRIMARY KEY,
+    drive_date TIMESTAMPTZ NOT NULL,
+    source TEXT,
+    source_lng DECIMAL(10, 6),
+    source_lat DECIMAL(10, 6),
+    destination TEXT,
+    dest_lng DECIMAL(10, 6),
+    dest_lat DECIMAL(10, 6),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_waze_drives_date ON waze_drives (drive_date);
+
+CREATE TABLE IF NOT EXISTS waze_route_points (
+    id SERIAL PRIMARY KEY,
+    route_date TIMESTAMPTZ NOT NULL,
+    point_order INTEGER NOT NULL,
+    lat DECIMAL(10, 6) NOT NULL,
+    lng DECIMAL(10, 6) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_waze_route_points_date ON waze_route_points (route_date);
+CREATE INDEX IF NOT EXISTS idx_waze_route_points_coords ON waze_route_points (lat, lng);
+
+CREATE TABLE IF NOT EXISTS waze_reports (
+    id SERIAL PRIMARY KEY,
+    event_date TIMESTAMPTZ NOT NULL,
+    type VARCHAR(100) NOT NULL,
+    subtype VARCHAR(255),
+    pos_lng DECIMAL(10, 6),
+    pos_lat DECIMAL(10, 6)
+);
+
+CREATE TABLE IF NOT EXISTS waze_feedback (
+    id SERIAL PRIMARY KEY,
+    event_date TIMESTAMPTZ NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    alert_type VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS waze_searches (
+    id SERIAL PRIMARY KEY,
+    search_date TIMESTAMPTZ NOT NULL,
+    query TEXT NOT NULL,
+    lat DECIMAL(10, 6),
+    lng DECIMAL(10, 6)
+);
+
+CREATE TABLE IF NOT EXISTS waze_favorites (
+    id SERIAL PRIMARY KEY,
+    place TEXT,
+    name VARCHAR(255),
+    type VARCHAR(100)
+);
