@@ -781,3 +781,7 @@ CREATE TABLE IF NOT EXISTS waze_favorites (
     name VARCHAR(255),
     type VARCHAR(100)
 );
+
+-- [Automated] Add index on irl_updates.created_at DESC to fix slow GET /shortcut_updates query (ZEON-41)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_irl_updates_created_at_desc
+ON irl_updates (created_at DESC);
