@@ -785,3 +785,56 @@ CREATE TABLE IF NOT EXISTS waze_favorites (
 -- [Automated] Add index on irl_updates.created_at DESC to fix slow GET /shortcut_updates query (ZEON-41)
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_irl_updates_created_at_desc
 ON irl_updates (created_at DESC);
+
+-- [Automated] WIP: Work in progress physical mail integration - will be hand edited
+CREATE TYPE physical_mail_type AS ENUM ('ptc', 'ltr', 'pkg', 'pkg_sml', 'pkg_big', 'o');;
+CREATE TABLE IF NOT EXISTS physical_mail (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    -- eg: pkg#NWVwdH
+    uid VARCHAR(255) UNIQUE NOT NULL,
+    -- r2 cf link, tech not null but idk
+    front_image_link TEXT,
+    images TEXT[],
+    -- enum type
+    type physical_mail_type DEFAULT 'ltr',
+    -- front text on mail, eg of hackclub envelope:
+    -- ==========
+    -- hack club
+    -- 15 falls rd
+    -- shelburne vt 054823
+    -- US POSTAGE
+    -- $0.74
+    -- LFP
+    -- hackpost!idhere
+    --
+    -- FLAVORTOWN.HACKCLUB.COM 
+    -- 
+    -- Scan this so we know yo got it!!
+    -- 
+    -- Saahil <lastname>
+    -- <addr line 1 here>
+    -- <Addr line 2>
+    -- <City>, <State> <Zip>
+    -- 
+    -- 
+    -- ========
+    -- ofc ts will be initally ocr from first img and then hand edited
+    header TEXT, 
+    -- from! name + address
+    -- eg from above: "Hack club <...addr here>"
+    from TEXT,
+    -- My address basically
+    -- eg: "Saahil <...addr here>"
+    to TEXT,
+    -- External links such as mail.hackclub.com or usps or intl tracking links!
+    external_link VARCHAR(255),
+    -- self explanatory below
+    scanned_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    -- soft deletions to prevent data loss
+    deleted_at TIMESTAMPTZ
+)
+
+CREATE INDEX idx_mail_created_at ON physical_mail(created_at);
+CREATE INDEX idx_mail_type ON physical_mail(type);
