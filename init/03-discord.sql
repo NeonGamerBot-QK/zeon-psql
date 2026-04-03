@@ -785,3 +785,16 @@ CREATE TABLE IF NOT EXISTS waze_favorites (
 -- [Automated] Add index on irl_updates.created_at DESC to fix slow GET /shortcut_updates query (ZEON-41)
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_irl_updates_created_at_desc
 ON irl_updates (created_at DESC);
+
+-- [Automated] Add gran_sessions table for Granola-alternative recording sessions
+CREATE TABLE IF NOT EXISTS gran_sessions (
+	id SERIAL PRIMARY KEY,
+	title TEXT NOT NULL DEFAULT 'Untitled Session',
+	transcript TEXT,
+	summary TEXT,
+	duration_seconds INTEGER,
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+	updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_gran_sessions_created_at ON gran_sessions (created_at DESC);
