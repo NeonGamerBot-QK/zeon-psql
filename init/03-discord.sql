@@ -798,3 +798,9 @@ CREATE TABLE IF NOT EXISTS gran_sessions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_gran_sessions_created_at ON gran_sessions (created_at DESC);
+
+-- [Automated] Add is_public and public_id columns to gran_sessions for shareable links
+ALTER TABLE gran_sessions ADD COLUMN IF NOT EXISTS is_public BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE gran_sessions ADD COLUMN IF NOT EXISTS public_id TEXT UNIQUE;
+
+CREATE INDEX IF NOT EXISTS idx_gran_sessions_public_id ON gran_sessions (public_id) WHERE public_id IS NOT NULL;
