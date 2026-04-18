@@ -830,8 +830,8 @@ CREATE TABLE IF NOT EXISTS physical_mail (
     external_link VARCHAR(255),
     -- self explanatory below
     scanned_at TIMESTAMPTZ,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     -- soft deletions to prevent data loss
     deleted_at TIMESTAMPTZ
 )
