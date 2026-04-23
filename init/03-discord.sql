@@ -804,3 +804,17 @@ ALTER TABLE gran_sessions ADD COLUMN IF NOT EXISTS is_public BOOLEAN NOT NULL DE
 ALTER TABLE gran_sessions ADD COLUMN IF NOT EXISTS public_id TEXT UNIQUE;
 
 CREATE INDEX IF NOT EXISTS idx_gran_sessions_public_id ON gran_sessions (public_id) WHERE public_id IS NOT NULL;
+
+-- [Automated] Add chatgpt_ahh_chats table for MCP chat persistence
+
+CREATE TABLE IF NOT EXISTS chatgpt_ahh_chats (
+    id SERIAL PRIMARY KEY,
+    session_id TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL DEFAULT 'New Chat',
+    messages JSONB NOT NULL DEFAULT '[]'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_session_id ON chatgpt_ahh_chats (session_id);
+CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_updated_at ON chatgpt_ahh_chats (updated_at DESC);
