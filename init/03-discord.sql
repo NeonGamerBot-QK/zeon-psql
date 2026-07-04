@@ -818,3 +818,17 @@ CREATE TABLE IF NOT EXISTS chatgpt_ahh_chats (
 
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_session_id ON chatgpt_ahh_chats (session_id);
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_updated_at ON chatgpt_ahh_chats (updated_at DESC);
+
+-- [Automated] Add robinhood_mcp_auth singleton table for Robinhood MCP OAuth token/client state (moved out of jdb — see PR #12 for the ledger tables this pairs with)
+CREATE TABLE "robinhood_mcp_auth" (
+	"id" varchar(20) PRIMARY KEY NOT NULL,
+	"client_id" varchar(255),
+	"redirect_uri" text,
+	"access_token" text,
+	"token_type" varchar(50),
+	"refresh_token" text,
+	"scope" text,
+	"expires_at" bigint,
+	"last_reminder_at" timestamp with time zone,
+	"updated_at" timestamp with time zone DEFAULT now()
+);
