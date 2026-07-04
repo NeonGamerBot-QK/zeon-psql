@@ -818,3 +818,33 @@ CREATE TABLE IF NOT EXISTS chatgpt_ahh_chats (
 
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_session_id ON chatgpt_ahh_chats (session_id);
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_updated_at ON chatgpt_ahh_chats (updated_at DESC);
+
+-- [Automated] Add robinhood_savings_entries ledger and robinhood_savings_audit_log audit trail for the Robinhood savings tracker module
+CREATE TABLE "robinhood_savings_entries" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"type" varchar(20) NOT NULL,
+	"amount_cents" integer NOT NULL,
+	"note" text,
+	"source" varchar(20) DEFAULT 'discord' NOT NULL,
+	"actor" varchar(100),
+	"occurred_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "rh_savings_entries_type_check" CHECK ((type)::text = ANY (ARRAY[('interest'::character varying)::text, ('deposit'::character varying)::text, ('withdrawal'::character varying)::text, ('adjustment'::character varying)::text]))
+);
+CREATE TABLE "robinhood_savings_audit_log" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"entry_id" integer,
+	"action" varchar(20) NOT NULL,
+	"actor" varchar(100),
+	"source" varchar(20),
+	"before" jsonb,
+	"after" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "rh_savings_audit_action_check" CHECK ((action)::text = ANY (ARRAY[('create'::character varying)::text, ('update'::character varying)::text, ('delete'::character varying)::text]))
+);
+ALTER TABLE "robinhood_savings_audit_log" ADD CONSTRAINT "rh_savings_audit_entry_id_fkey" FOREIGN KEY ("entry_id") REFERENCES "public"."robinhood_savings_entries"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "idx_rh_savings_entries_type" ON "robinhood_savings_entries" USING btree ("type" text_ops);--> statement-breakpoint
+CREATE INDEX "idx_rh_savings_entries_occurred" ON "robinhood_savings_entries" USING btree ("occurred_at" timestamptz_ops);--> statement-breakpoint
+CREATE INDEX "idx_rh_savings_audit_entry" ON "robinhood_savings_audit_log" USING btree ("entry_id" int4_ops);--> statement-breakpoint
+CREATE INDEX "idx_rh_savings_audit_created" ON "robinhood_savings_audit_log" USING btree ("created_at" timestamptz_ops);
