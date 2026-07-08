@@ -818,3 +818,12 @@ CREATE TABLE IF NOT EXISTS chatgpt_ahh_chats (
 
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_session_id ON chatgpt_ahh_chats (session_id);
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_updated_at ON chatgpt_ahh_chats (updated_at DESC);
+
+-- [Automated] Add cost_of_living_snapshots table for morning-email day-over-day trend
+CREATE TABLE "cost_of_living_snapshots" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"family_of_four_monthly" numeric,
+	"single_person_monthly" numeric,
+	"comparisons" jsonb DEFAULT '[]'::jsonb,
+	"fetched_at" timestamp with time zone DEFAULT now()
+);
