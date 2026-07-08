@@ -818,3 +818,14 @@ CREATE TABLE IF NOT EXISTS chatgpt_ahh_chats (
 
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_session_id ON chatgpt_ahh_chats (session_id);
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_updated_at ON chatgpt_ahh_chats (updated_at DESC);
+
+-- [Automated] Add timevoice_auth table for storing Timevoice OAuth2 tokens
+CREATE TABLE "timevoice_auth" (
+	"id" varchar(20) PRIMARY KEY NOT NULL,
+	"access_token" text,
+	"token_type" varchar(50),
+	"refresh_token" text,
+	"scope" text,
+	"expires_at" bigint,
+	"updated_at" timestamp with time zone DEFAULT now()
+);
