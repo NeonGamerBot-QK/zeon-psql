@@ -818,3 +818,18 @@ CREATE TABLE IF NOT EXISTS chatgpt_ahh_chats (
 
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_session_id ON chatgpt_ahh_chats (session_id);
 CREATE INDEX IF NOT EXISTS idx_chatgpt_ahh_chats_updated_at ON chatgpt_ahh_chats (updated_at DESC);
+
+-- [Automated] Add spark_deliveries table for Spark Driver delivery logging (issue #322)
+CREATE TABLE "spark_deliveries" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"occurred_at" timestamp with time zone NOT NULL,
+	"miles" double precision NOT NULL,
+	"stops" integer DEFAULT 1 NOT NULL,
+	"base_pay_cents" integer NOT NULL,
+	"boost_pay_cents" integer DEFAULT 0 NOT NULL,
+	"tip_pay_cents" integer DEFAULT 0 NOT NULL,
+	"total_pay_cents" integer NOT NULL,
+	"notes" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+CREATE INDEX "idx_spark_deliveries_occurred" ON "spark_deliveries" USING btree ("occurred_at" timestamptz_ops);
