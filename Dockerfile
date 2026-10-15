@@ -9,5 +9,6 @@ RUN apt-get update \
 # Scripts source .env and use ./backups, so they must run from here.
 WORKDIR /app
 
-# Copy the host's GPG keyring (mounted read-only) so gpg can write its lock files, then run the backup.
-ENTRYPOINT ["bash", "-c", "mkdir -p /root/.gnupg && cp -r /gnupg-host/. /root/.gnupg/ && chmod 700 /root/.gnupg && bash prep_backup.sh && bash backup.sh"]
+COPY backup.sh prep_backup.sh backup-entrypoint.sh ./
+
+ENTRYPOINT ["bash", "backup-entrypoint.sh"]

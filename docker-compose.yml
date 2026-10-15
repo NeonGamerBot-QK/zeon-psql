@@ -36,6 +36,7 @@ services:
     volumes:
       - ./backup.sh:/app/backup.sh:ro
       - ./prep_backup.sh:/app/prep_backup.sh:ro
+      - ./backup-entrypoint.sh:/app/backup-entrypoint.sh:ro
       # backup.sh rewrites .env (strips CRLF), so this one stays writable
       - ./.env:/app/.env
       - ./backups:/app/backups
