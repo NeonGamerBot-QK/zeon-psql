@@ -7,8 +7,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends rsync openssh-client gnupg curl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Backup scripts live in /app. Run with: docker exec -w /app <container> bash backup-entrypoint.sh
-WORKDIR /app
+# Backup scripts live in /opt/backup (not /app, which a volume mount can hide). Run with: docker exec -w /opt/backup <container> bash backup-entrypoint.sh
+WORKDIR /opt/backup
 COPY backup.sh prep_backup.sh backup-entrypoint.sh ./
 
 # Init scripts run once, only when the data directory is empty.
