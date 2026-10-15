@@ -25,27 +25,24 @@ services:
       retries: 5
       start_period: 10s
 
-  # backup:
-  #   build: ./backup
-  #   container_name: psql_backup
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./backups:/backups
-  #   environment:
-  #     POSTGRES_USER: ${POSTGRES_USER}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #     POSTGRES_DB: ${POSTGRES_DB}
-  #     POSTGRES_HOST: postgres
-  #     S3_ENDPOINT: ${S3_ENDPOINT}
-  #     S3_BUCKET: ${S3_BUCKET}
-  #     SFTP_HOST: ${SFTP_HOST}
-  #     SFTP_USER: ${SFTP_USER}
-  #     SFTP_KEY: ${SFTP_KEY}
-  #     TAILSCALE_HOST: ${TAILSCALE_HOST}
-  #   networks:
-  #     - psqlnet
+  # One-shot job, not started by `up`. Run with: docker compose run --rm backup
+  backup:
+    build: .
+    container_name: psql_backup
+    profiles: ["backup"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backup.sh:/app/backup.sh:ro
+      - ./prep_backup.sh:/app/prep_backup.sh:ro
+      # backup.sh rewrites .env (strips CRLF), so this one stays writable
+      - ./.env:/app/.env
+      - ./backups:/app/backups
+      - ~/.gnupg:/gnupg-host:ro
+      - ~/.ssh:/root/.ssh:ro
+    networks:
+      - psqlnet
 
 networks:
   psqlnet:
