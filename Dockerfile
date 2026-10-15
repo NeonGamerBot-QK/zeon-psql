@@ -14,4 +14,7 @@ COPY backup.sh prep_backup.sh backup-entrypoint.sh ./
 # Init scripts run once, only when the data directory is empty.
 COPY init/ /docker-entrypoint-initdb.d/
 
-EXPOSE 5432
+# Listen on 5463 instead of the default 5432. Postgres reads PGPORT for the server port,
+# and in-container clients (psql, pg_isready, init scripts) pick it up too.
+ENV PGPORT=5463
+EXPOSE 5463
