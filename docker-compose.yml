@@ -25,25 +25,5 @@ services:
       retries: 5
       start_period: 10s
 
-  # One-shot job, not started by `up`. Run with: docker compose run --rm backup
-  backup:
-    build: .
-    container_name: psql_backup
-    profiles: ["backup"]
-    depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - ./backup.sh:/app/backup.sh:ro
-      - ./prep_backup.sh:/app/prep_backup.sh:ro
-      - ./backup-entrypoint.sh:/app/backup-entrypoint.sh:ro
-      # backup.sh rewrites .env (strips CRLF), so this one stays writable
-      - ./.env:/app/.env
-      - ./backups:/app/backups
-      - ~/.gnupg:/gnupg-host:ro
-      - ~/.ssh:/root/.ssh:ro
-    networks:
-      - psqlnet
-
 networks:
   psqlnet:
