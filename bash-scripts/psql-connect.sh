@@ -11,4 +11,4 @@ DB_NAME="${1:-$POSTGRES_DB}"
 
 print_info "Connecting to database '$DB_NAME'..."
 
-PGPASSWORD="$POSTGRES_PASSWORD" psql "host=$PGHOST port=5634 user=$POSTGRES_USER dbname=$DB_NAME"
+PGPASSWORD="$POSTGRES_PASSWORD" psql "host=$PGHOST port=5463 user=$POSTGRES_USER dbname=$DB_NAME"

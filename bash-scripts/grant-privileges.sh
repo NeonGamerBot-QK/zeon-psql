@@ -28,14 +28,14 @@ case "$PRIV_TYPE" in
   readonly)
     psql_exec "GRANT CONNECT ON DATABASE \"$DB_NAME\" TO \"$USER_NAME\";"
     # Connect to the specific database to grant schema permissions
-    PGPASSWORD="$POSTGRES_PASSWORD" psql "host=$PGHOST port=5634 user=$POSTGRES_USER dbname=$DB_NAME" -v ON_ERROR_STOP=1 \
+    PGPASSWORD="$POSTGRES_PASSWORD" psql "host=$PGHOST port=5463 user=$POSTGRES_USER dbname=$DB_NAME" -v ON_ERROR_STOP=1 \
       -c "GRANT USAGE ON SCHEMA public TO \"$USER_NAME\";" \
       -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"$USER_NAME\";" \
       -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO \"$USER_NAME\";"
     ;;
   readwrite)
     psql_exec "GRANT CONNECT ON DATABASE \"$DB_NAME\" TO \"$USER_NAME\";"
-    PGPASSWORD="$POSTGRES_PASSWORD" psql "host=$PGHOST port=5634 user=$POSTGRES_USER dbname=$DB_NAME" -v ON_ERROR_STOP=1 \
+    PGPASSWORD="$POSTGRES_PASSWORD" psql "host=$PGHOST port=5463 user=$POSTGRES_USER dbname=$DB_NAME" -v ON_ERROR_STOP=1 \
       -c "GRANT USAGE ON SCHEMA public TO \"$USER_NAME\";" \
       -c "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO \"$USER_NAME\";" \
       -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO \"$USER_NAME\";"

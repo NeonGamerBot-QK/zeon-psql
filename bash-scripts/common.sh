@@ -19,7 +19,7 @@ load_env() {
 
 # Base psql connection string for admin operations
 get_psql_conn() {
-  echo "host=$PGHOST port=5634 user=$POSTGRES_USER dbname=$POSTGRES_DB"
+  echo "host=$PGHOST port=5463 user=$POSTGRES_USER dbname=$POSTGRES_DB"
 }
 
 # Execute a psql command as the admin user
