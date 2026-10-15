@@ -13,6 +13,7 @@ services:
       - ./pgdata:/var/lib/postgresql/data
       - ./idksock:/var/run/postgresql
       - ./init:/docker-entrypoint-initdb.d 
+      - ./:/app
     networks:
       - psqlnet
     ports:
