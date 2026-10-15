@@ -44,7 +44,7 @@ docker-compose logs -f postgres
 
 ## Port
 
-PostgreSQL runs on port `5634` (mapped from container's 5432).
+PostgreSQL runs on port `5463` (mapped from container's 5432).
 
 ## Script Conventions
 

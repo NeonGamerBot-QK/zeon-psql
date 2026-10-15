@@ -81,5 +81,5 @@ See [bash-scripts/README.md](bash-scripts/README.md) for full documentation.
 ## Connection Details
 
 - **Host:** Value of `PGHOST` (default: `localhost`)
-- **Port:** `5634`
+- **Port:** `5463`
 - **Admin User:** Value of `POSTGRES_USER`

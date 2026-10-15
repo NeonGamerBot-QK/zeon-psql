@@ -22,7 +22,7 @@ PASSWORD=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c16)
 echo "Creating database '$DB_NAME' and user '$USER_NAME'..."
 
 # Base psql connection string
-PSQL_CONN="host=$PGHOST port=5634 user=$POSTGRES_USER dbname=$POSTGRES_DB"
+PSQL_CONN="host=$PGHOST port=5463 user=$POSTGRES_USER dbname=$POSTGRES_DB"
 
 # 1️⃣ Create the user
 PGPASSWORD="$POSTGRES_PASSWORD" psql "$PSQL_CONN" -v ON_ERROR_STOP=1 \

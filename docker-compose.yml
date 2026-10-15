@@ -17,7 +17,7 @@ services:
     networks:
       - psqlnet
     ports:
-      - "5634:5432"   # host:container
+      - "5463:5432"   # host:container
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 30s
