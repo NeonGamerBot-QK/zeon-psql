@@ -11,8 +11,8 @@ if [ -f .env ]; then
   source .env
   set +a
 else
-  echo ".env file not found!"
-  exit 1
+  # Fall back to variables already set in the environment
+  echo "No .env file found, using existing environment variables"
 fi
 START_TIME=$(date +%s)
 BACKUP_DIR="./backups"
@@ -45,10 +45,10 @@ if [ -n "$SCP_DESTINATIONS" ]; then
 
     if [ -n "$port" ]; then
       echo "Uploading to $userhost:$remote_file on port $port via scp..."
-      scp -i "$SCP_KEY" -P "$port" "$LATEST_BACKUP" "$userhost:$remote_file" || echo "❌ scp to $userhost failed, continuing..."
+      scp ${SCP_KEY:+-i "$SCP_KEY"} -P "$port" "$LATEST_BACKUP" "$userhost:$remote_file" || echo "❌ scp to $userhost failed, continuing..."
     else
       echo "Uploading to $userhost:$remote_file via scp..."
-      scp -i "$SCP_KEY" "$LATEST_BACKUP" "$userhost:$remote_file" || echo "❌ scp to $userhost failed, continuing..."
+      scp ${SCP_KEY:+-i "$SCP_KEY"} "$LATEST_BACKUP" "$userhost:$remote_file" || echo "❌ scp to $userhost failed, continuing..."
     fi
   done
 else
@@ -61,7 +61,11 @@ END_TIME=$(date +%s)
 ELAPSED=$((END_TIME - START_TIME))
 BACKUP_SIZE=$(du -h "$LATEST_BACKUP" | cut -f1)
 
-curl -s -X POST -H "Authorization: Bearer $SLACK_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{\"channel\":\"$CHANNEL_ID\",\"text\":\"mrrp, backups complete! latest backup size is: $BACKUP_SIZE and it took $ELAPSED seconds to transfer to servers and run this script!\"}" \
-  https://slack.com/api/chat.postMessage > /dev/null
+if [ -n "$SLACK_TOKEN" ] && [ -n "$CHANNEL_ID" ]; then
+  curl -s -X POST -H "Authorization: Bearer $SLACK_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"channel\":\"$CHANNEL_ID\",\"text\":\"mrrp, backups complete! latest backup size is: $BACKUP_SIZE and it took $ELAPSED seconds to transfer to servers and run this script!\"}" \
+    https://slack.com/api/chat.postMessage > /dev/null
+else
+  echo "SLACK_TOKEN or CHANNEL_ID not set, skipping Slack notification"
+fi
