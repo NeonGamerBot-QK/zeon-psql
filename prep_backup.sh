@@ -2,11 +2,14 @@
 set -e
 
 # --- Load environment ---
-set -a
-source .env
-set +a
+# .env is optional; fall back to variables already in the environment
+if [ -f .env ]; then
+  set -a
+  source .env
+  set +a
+fi
 
-: "${PSQL_DB_URL:?Need PSQL_DB_URL in .env}"
+: "${PSQL_DB_URL:?Need PSQL_DB_URL in .env or the environment}"
 : "${BACKUP_DIR:=./backups}"
 
 mkdir -p "$BACKUP_DIR"
